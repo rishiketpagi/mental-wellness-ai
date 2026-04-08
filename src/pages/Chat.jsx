@@ -133,75 +133,77 @@ function Chat() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-violet-50 to-white px-4 py-8">
-      <div className="max-w-3xl mx-auto bg-white rounded-3xl shadow-xl border border-gray-100 p-6">
-        <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
+    <section className="mx-auto w-full max-w-5xl space-y-3 sm:space-y-4">
+      <header className="rounded-3xl border border-gray-100 bg-white p-4 shadow-sm sm:p-6 md:p-7">
+        <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-indigo-700">Support Chat</h1>
-            <p className="text-gray-500 mt-1">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-indigo-500 sm:text-xs">Support Space</p>
+            <h1 className="mt-1.5 text-xl font-bold text-gray-900 sm:text-2xl md:text-3xl">Support Chat</h1>
+            <p className="mt-1.5 text-xs text-gray-500 sm:text-sm md:text-base">
               Talk freely. This space is here to support you gently.
             </p>
           </div>
 
-          <div className="flex gap-3 flex-wrap">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:w-auto">
             <button
               onClick={() => setShowHelp((prev) => !prev)}
-              className="rounded-xl bg-amber-100 px-4 py-2 text-amber-800 hover:bg-amber-200 transition"
+              className="rounded-xl bg-amber-100 px-3 py-2 text-xs font-semibold text-amber-800 transition hover:bg-amber-200 sm:text-sm"
             >
-              {showHelp ? "Hide Help" : "Urgent Help"}
+              {showHelp ? "Hide urgent help" : "Urgent help"}
             </button>
 
             <button
               onClick={handleClearChat}
-              className="rounded-xl bg-red-100 px-4 py-2 text-red-700 hover:bg-red-200 transition"
+              className="rounded-xl bg-red-100 px-3 py-2 text-xs font-semibold text-red-700 transition hover:bg-red-200 sm:text-sm"
             >
-              Clear Chat
+              Clear chat
             </button>
 
             <button
               onClick={() => navigate("/home")}
-              className="rounded-xl bg-gray-100 px-4 py-2 text-gray-700 hover:bg-gray-200 transition"
+              className="rounded-xl bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-700 transition hover:bg-gray-200 sm:text-sm"
             >
-              Back
+              Dashboard
             </button>
           </div>
         </div>
+      </header>
 
-        {showHelp && (
-          <div className="mb-4 rounded-2xl border border-amber-200 bg-amber-50 p-4">
-            <h2 className="text-lg font-semibold text-amber-800">
-              Need urgent support?
-            </h2>
-            <p className="text-sm text-amber-700 mt-2">
-              Reach out to someone near you right away — a friend, family member,
-              teacher, counselor, or another trusted person.
-            </p>
-            <div className="mt-3 text-sm text-amber-900 space-y-1">
-              <p><strong>Tele-MANAS:</strong> 14416</p>
-              <p><strong>Toll-free:</strong> 1800-89-14416</p>
-              <p><strong>Available:</strong> 24/7 mental health support</p>
-            </div>
+      {showHelp && (
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
+          <h2 className="text-lg font-semibold text-amber-800">
+            Need urgent support?
+          </h2>
+          <p className="mt-2 text-sm text-amber-700">
+            Reach out to someone near you right away: a friend, family member,
+            teacher, counselor, or another trusted person.
+          </p>
+          <div className="mt-3 space-y-1 text-sm text-amber-900">
+            <p><strong>Tele-MANAS:</strong> 14416</p>
+            <p><strong>Toll-free:</strong> 1800-89-14416</p>
+            <p><strong>Available:</strong> 24/7 mental health support</p>
           </div>
-        )}
+        </div>
+      )}
 
-        <div className="h-[420px] overflow-y-auto rounded-2xl bg-gray-50 p-4 space-y-4 border border-gray-100">
+      <div className="rounded-3xl border border-gray-100 bg-white p-3 shadow-sm sm:p-5">
+        <div className="h-[52vh] min-h-[300px] max-h-[520px] space-y-3 overflow-y-auto rounded-2xl border border-gray-100 bg-gray-50 p-3 sm:p-4">
           {messages.length === 0 ? (
-            <p className="text-gray-400 text-center mt-20">
+            <p className="mt-20 text-center text-gray-400">
               Start by sharing how you feel today.
             </p>
           ) : (
             messages.map((msg, index) => (
               <div
                 key={msg.id || index}
-                className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"
-                  }`}
+                className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[75%] rounded-2xl px-4 py-3 text-sm shadow-sm whitespace-pre-wrap ${msg.sender === "user"
+                  className={`max-w-[90%] rounded-2xl px-3 py-2.5 text-sm leading-relaxed shadow-sm whitespace-pre-wrap sm:max-w-[76%] sm:px-4 sm:py-3 ${msg.sender === "user"
                     ? "bg-indigo-600 text-white"
                     : msg.text.includes("Tele-MANAS") || msg.text.includes("14416")
-                      ? "bg-red-50 border border-red-200 text-red-900"
-                      : "bg-white border border-gray-200 text-gray-800"
+                      ? "border border-red-200 bg-red-50 text-red-900"
+                      : "border border-gray-200 bg-white text-gray-800"
                     }`}
                 >
                   {msg.text}
@@ -212,20 +214,20 @@ function Chat() {
 
           {loading && (
             <div className="flex justify-start">
-              <div className="bg-white border border-gray-200 text-gray-500 rounded-2xl px-4 py-3 text-sm">
+              <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-500">
                 Typing...
               </div>
             </div>
           )}
         </div>
 
-        <div className="mt-6 flex gap-3">
+        <div className="mt-3 flex flex-col gap-2.5 sm:flex-row">
           <input
             type="text"
-            placeholder="Type what’s on your mind..."
+            placeholder="Type what is on your mind..."
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            className="flex-1 rounded-2xl border border-gray-300 px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-300"
+            className="w-full flex-1 rounded-2xl border border-gray-300 px-4 py-2.5 text-sm outline-none transition focus:ring-2 focus:ring-indigo-300 sm:py-3"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 handleSend();
@@ -236,13 +238,13 @@ function Chat() {
           <button
             onClick={handleSend}
             disabled={loading}
-            className="rounded-2xl bg-indigo-600 text-white px-6 py-3 hover:bg-indigo-700 transition disabled:opacity-60"
+            className="rounded-2xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-60 sm:px-6 sm:py-3"
           >
             Send
           </button>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 

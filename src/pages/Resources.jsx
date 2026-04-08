@@ -77,54 +77,52 @@ function Resources() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-violet-50 to-white px-4 py-8">
-            <div className="max-w-6xl mx-auto">
-                <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-8">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                        <div>
-                            <p className="text-sm font-medium text-indigo-500">Support Library</p>
-                            <h1 className="text-4xl font-bold text-gray-900 mt-2">
-                                Wellness Resources
-                            </h1>
-                            <p className="text-gray-500 mt-2 max-w-2xl">
-                                Simple, practical support for common emotional struggles.
-                            </p>
-                        </div>
-
-                        <button
-                            onClick={() => navigate("/home")}
-                            className="rounded-2xl bg-gray-100 text-gray-700 px-5 py-3 font-medium hover:bg-gray-200 transition"
-                        >
-                            Back to Home
-                        </button>
+        <section className="mx-auto w-full max-w-6xl space-y-3 sm:space-y-4">
+            <div className="rounded-3xl border border-gray-100 bg-white p-4 shadow-sm sm:p-6 md:p-7">
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div>
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-indigo-500 sm:text-xs">Support Library</p>
+                        <h1 className="mt-1.5 text-xl font-bold text-gray-900 sm:text-2xl md:text-4xl">
+                            Wellness Resources
+                        </h1>
+                        <p className="mt-1.5 max-w-2xl text-xs text-gray-500 sm:text-sm md:text-base">
+                            Simple, practical support for common emotional struggles.
+                        </p>
                     </div>
-                </div>
 
-                <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 mt-8">
-                    {resources.map((item, index) => (
-                        <div
-                            key={index}
-                            className={`rounded-3xl border p-6 shadow-lg bg-white`}
-                        >
-                            <div
-                                className={`inline-block rounded-full px-4 py-2 text-sm font-medium border ${colorMap[item.color]}`}
-                            >
-                                {item.title}
-                            </div>
-
-                            <ul className="mt-5 space-y-3 text-gray-600">
-                                {item.tips.map((tip, i) => (
-                                    <li key={i} className="flex gap-3">
-                                        <span className="text-indigo-500 font-bold">•</span>
-                                        <span>{tip}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    ))}
+                    <button
+                        onClick={() => navigate("/home")}
+                        className="rounded-xl bg-gray-100 px-4 py-2 text-xs font-semibold text-gray-700 transition hover:bg-gray-200 sm:px-5 sm:py-2.5 sm:text-sm"
+                    >
+                        Back to dashboard
+                    </button>
                 </div>
             </div>
-        </div>
+
+            <div className="grid gap-3 sm:grid-cols-2 lg:gap-4 xl:grid-cols-3">
+                {resources.map((item, index) => (
+                    <div
+                        key={index}
+                        className="rounded-3xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5"
+                    >
+                        <div
+                            className={`inline-block rounded-full px-4 py-2 text-sm font-medium border ${colorMap[item.color]}`}
+                        >
+                            {item.title}
+                        </div>
+
+                        <ul className="mt-3.5 space-y-2.5 text-xs text-gray-600 sm:text-sm">
+                            {item.tips.map((tip, i) => (
+                                <li key={i} className="flex gap-3">
+                                    <span className="text-indigo-500 font-bold">•</span>
+                                    <span>{tip}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                ))}
+            </div>
+        </section>
     );
 }
 

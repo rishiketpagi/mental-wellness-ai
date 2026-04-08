@@ -68,10 +68,23 @@ function MoodChart({ moods }) {
         plugins: {
             legend: {
                 display: true,
+                position: "top",
+                labels: {
+                    boxWidth: 8,
+                    boxHeight: 8,
+                    padding: 8,
+                    usePointStyle: true,
+                    font: {
+                        size: 11,
+                    },
+                },
             },
             title: {
                 display: true,
                 text: "Your Mood Trend",
+                font: {
+                    size: 12,
+                },
             },
             tooltip: {
                 callbacks: {
@@ -83,11 +96,27 @@ function MoodChart({ moods }) {
             },
         },
         scales: {
+            x: {
+                ticks: {
+                    maxRotation: 0,
+                    autoSkip: true,
+                    maxTicksLimit: 4,
+                    font: {
+                        size: 10,
+                    },
+                },
+                grid: {
+                    display: false,
+                },
+            },
             y: {
                 min: 1,
                 max: 4,
                 ticks: {
                     stepSize: 1,
+                    font: {
+                        size: 10,
+                    },
                     callback: function (value) {
                         return valueToMood[value] || value;
                     },
@@ -105,7 +134,7 @@ function MoodChart({ moods }) {
     }
 
     return (
-        <div className="h-80">
+        <div className="h-56 sm:h-64 lg:h-80">
             <Line data={data} options={options} />
         </div>
     );

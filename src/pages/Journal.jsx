@@ -56,41 +56,46 @@ function Journal() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center px-4 py-8">
-            <div className="w-full max-w-3xl rounded-3xl bg-white shadow-xl p-8 border border-gray-100">
-                <h1 className="text-3xl font-bold text-center text-violet-700">
+        <section className="mx-auto w-full max-w-4xl space-y-3 sm:space-y-4">
+            <header className="rounded-3xl border border-gray-100 bg-white p-4 shadow-sm sm:p-6 md:p-7">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-violet-500 sm:text-xs">Guided Journal</p>
+                <h1 className="mt-1.5 text-xl font-bold text-gray-900 sm:text-2xl md:text-3xl">
                     Journal Reflection
                 </h1>
-                <p className="text-center text-gray-500 mt-2">
-                    Write what’s on your mind. The AI will offer a gentle reflection.
+                <p className="mt-1.5 text-xs text-gray-500 sm:text-sm md:text-base">
+                    Write what is on your mind. The AI will respond with a gentle reflection.
                 </p>
+            </header>
+
+            <div className="w-full rounded-3xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5 md:p-7">
+                <label className="text-xs font-medium text-gray-600 sm:text-sm">Your reflection</label>
 
                 <textarea
                     value={journalText}
                     onChange={(e) => setJournalText(e.target.value)}
                     placeholder="Write your thoughts here..."
-                    rows="10"
-                    className="w-full mt-6 rounded-2xl border border-gray-300 px-4 py-3 outline-none focus:ring-2 focus:ring-violet-300"
+                    rows="8"
+                    className="mt-2 w-full rounded-2xl border border-gray-300 px-4 py-3 outline-none transition focus:ring-2 focus:ring-violet-300"
                 />
 
-                <div className="flex flex-col sm:flex-row gap-3 justify-center mt-6">
+                <div className="mt-5 flex flex-col-reverse gap-2.5 sm:flex-row sm:justify-end">
+                    <button
+                        onClick={() => navigate("/home")}
+                        className="rounded-xl bg-gray-100 px-6 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-200"
+                    >
+                        Back to dashboard
+                    </button>
+
                     <button
                         onClick={handleSaveJournal}
                         disabled={loading}
-                        className="rounded-xl bg-violet-600 text-white px-6 py-3 hover:bg-violet-700 transition disabled:opacity-60"
+                        className="rounded-xl bg-violet-600 px-6 py-3 text-sm font-medium text-white transition hover:bg-violet-700 disabled:opacity-60"
                     >
-                        {loading ? "Analyzing..." : "Save Journal"}
-                    </button>
-
-                    <button
-                        onClick={() => navigate("/home")}
-                        className="rounded-xl bg-gray-100 text-gray-700 px-6 py-3 hover:bg-gray-200 transition"
-                    >
-                        Back to Home
+                        {loading ? "Analyzing..." : "Save journal"}
                     </button>
                 </div>
             </div>
-        </div>
+        </section>
     );
 }
 

@@ -6,6 +6,8 @@ import Journal from "./pages/Journal";
 import Chat from "./pages/Chat";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Resources from "./pages/Resources";
+import AppLayout from "./components/layout/AppLayout";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
@@ -17,7 +19,9 @@ function App() {
           path="/home"
           element={
             <ProtectedRoute>
-              <Home />
+              <AppLayout>
+                <Home />
+              </AppLayout>
             </ProtectedRoute>
           }
         />
@@ -26,7 +30,9 @@ function App() {
           path="/mood"
           element={
             <ProtectedRoute>
-              <Mood />
+              <AppLayout>
+                <Mood />
+              </AppLayout>
             </ProtectedRoute>
           }
         />
@@ -35,7 +41,9 @@ function App() {
           path="/journal"
           element={
             <ProtectedRoute>
-              <Journal />
+              <AppLayout>
+                <Journal />
+              </AppLayout>
             </ProtectedRoute>
           }
         />
@@ -43,7 +51,9 @@ function App() {
           path="/chat"
           element={
             <ProtectedRoute>
-              <Chat />
+              <AppLayout>
+                <Chat />
+              </AppLayout>
             </ProtectedRoute>
           }
         />
@@ -51,7 +61,19 @@ function App() {
           path="/resources"
           element={
             <ProtectedRoute>
-              <Resources />
+              <AppLayout>
+                <Resources />
+              </AppLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <AppLayout>
+                <Profile />
+              </AppLayout>
             </ProtectedRoute>
           }
         />

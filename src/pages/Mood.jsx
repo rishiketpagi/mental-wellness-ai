@@ -31,63 +31,68 @@ function Mood() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center px-4">
-            <div className="w-full max-w-2xl rounded-3xl bg-white shadow-xl p-8 border border-gray-100">
-                <h1 className="text-3xl font-bold text-center text-indigo-700">
+        <section className="mx-auto w-full max-w-3xl space-y-3 sm:space-y-4">
+            <header className="rounded-3xl border border-gray-100 bg-white p-4 shadow-sm sm:p-6 md:p-7">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-indigo-500 sm:text-xs">Mood Check-In</p>
+                <h1 className="mt-1.5 text-xl font-bold text-gray-900 sm:text-2xl md:text-3xl">
                     How are you feeling today?
                 </h1>
-                <p className="text-center text-gray-500 mt-2">
-                    Choose a mood and add a small note if you want
+                <p className="mt-1.5 text-xs text-gray-500 sm:text-sm md:text-base">
+                    Choose a mood and add a short note if you want to capture context.
                 </p>
+            </header>
+
+            <div className="w-full rounded-3xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5 md:p-7">
+                <label className="text-xs font-medium text-gray-600 sm:text-sm">Optional note</label>
 
                 <textarea
                     placeholder="Write a short note... for example: I felt tired after classes today"
                     value={note}
                     onChange={(e) => setNote(e.target.value)}
                     rows="4"
-                    className="w-full mt-6 rounded-2xl border border-gray-300 px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-300"
+                    className="mt-2 w-full rounded-2xl border border-gray-300 px-4 py-3 outline-none transition focus:ring-2 focus:ring-indigo-300"
                 />
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-4 sm:gap-3">
                     <button
                         onClick={() => saveMood("Happy")}
-                        className="rounded-2xl bg-green-100 py-4 hover:bg-green-200 transition"
+                        className="rounded-2xl bg-green-100 px-2 py-3 text-xs font-semibold text-green-800 transition hover:bg-green-200 sm:py-4 sm:text-sm"
                     >
                         😊 Happy
                     </button>
 
                     <button
                         onClick={() => saveMood("Neutral")}
-                        className="rounded-2xl bg-yellow-100 py-4 hover:bg-yellow-200 transition"
+                        className="rounded-2xl bg-yellow-100 px-2 py-3 text-xs font-semibold text-yellow-800 transition hover:bg-yellow-200 sm:py-4 sm:text-sm"
                     >
                         😐 Neutral
                     </button>
 
                     <button
                         onClick={() => saveMood("Sad")}
-                        className="rounded-2xl bg-blue-100 py-4 hover:bg-blue-200 transition"
+                        className="rounded-2xl bg-blue-100 px-2 py-3 text-xs font-semibold text-blue-800 transition hover:bg-blue-200 sm:py-4 sm:text-sm"
                     >
                         😔 Sad
                     </button>
 
                     <button
                         onClick={() => saveMood("Stressed")}
-                        className="rounded-2xl bg-red-100 py-4 hover:bg-red-200 transition"
+                        className="rounded-2xl bg-red-100 px-2 py-3 text-xs font-semibold text-red-800 transition hover:bg-red-200 sm:py-4 sm:text-sm"
                     >
                         😣 Stressed
                     </button>
                 </div>
 
-                <div className="mt-6 text-center">
+                <div className="mt-5 text-right">
                     <button
                         onClick={() => navigate("/home")}
-                        className="rounded-xl bg-gray-100 px-5 py-3 text-gray-700 hover:bg-gray-200 transition"
+                        className="rounded-xl bg-gray-100 px-5 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-200"
                     >
-                        Back to Home
+                        Back to dashboard
                     </button>
                 </div>
             </div>
-        </div>
+        </section>
     );
 }
 
