@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -24,6 +24,12 @@ function Chat() {
   const [loading, setLoading] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
 
+  const messagesEndRef = useRef(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   const fetchMessages = async () => {
     try {
       if (!user) return;
@@ -36,9 +42,9 @@ function Chat() {
 
       const snapshot = await getDocs(q);
 
-      const chatData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
+      const chatData = snapshot.docs.map((item) => ({
+        id: item.id,
+        ...item.data(),
       }));
 
       setMessages(chatData);
@@ -53,10 +59,14 @@ function Chat() {
     }
   }, [user]);
 
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, loading]);
+
   const handleSend = async () => {
     if (!message.trim() || !user) return;
 
-    const currentMessage = message;
+    const currentMessage = message.trim();
     setMessage("");
     setLoading(true);
 
@@ -76,9 +86,10 @@ function Chat() {
         },
       ]);
 
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/chat`, {
-        message: currentMessage,
-      });
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/chat`,
+        { message: currentMessage }
+      );
 
       const aiReply = response.data.reply;
 
@@ -98,6 +109,7 @@ function Chat() {
       ]);
     } catch (error) {
       console.error("Chat error:", error);
+      console.log("Backend response:", error.response?.data);
       alert(
         error.response?.data?.details ||
         error.response?.data?.error ||
@@ -132,81 +144,149 @@ function Chat() {
     }
   };
 
+  const isCrisisReply = (text) => {
+    if (!text) return false;
+    const lower = text.toLowerCase();
+    return (
+      lower.includes("tele-manas") ||
+      lower.includes("14416") ||
+      lower.includes("1800-89-14416") ||
+      lower.includes("immediate human support")
+    );
+  };
+
   return (
-    <section className="mx-auto w-full max-w-5xl space-y-3 sm:space-y-4">
-      <header className="rounded-3xl border border-gray-100 bg-white p-4 shadow-sm sm:p-6 md:p-7">
-        <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-indigo-500 sm:text-xs">Support Space</p>
-            <h1 className="mt-1.5 text-xl font-bold text-gray-900 sm:text-2xl md:text-3xl">Support Chat</h1>
-            <p className="mt-1.5 text-xs text-gray-500 sm:text-sm md:text-base">
-              Talk freely. This space is here to support you gently.
+    <div className="max-w-4xl mx-auto space-y-4 md:space-y-6 px-1 sm:px-0">
+      <section className="bg-white rounded-[24px] md:rounded-[28px] shadow-lg border border-gray-100 p-4 sm:p-5 md:p-8">
+        <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-6">
+          <div className="max-w-3xl">
+            <p className="text-sm font-semibold tracking-wide text-emerald-500 uppercase">
+              AI Support Space
             </p>
+
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mt-2">
+              Support Chat
+            </h1>
+
+            <p className="text-gray-500 mt-3 leading-relaxed">
+              Talk freely in a calm, private space. Your AI companion is here
+              to respond gently and help you reflect.
+            </p>
+
+            <div className="mt-5 flex flex-wrap gap-3">
+              <span className="rounded-full bg-emerald-100 text-emerald-700 px-4 py-2 text-sm font-medium">
+                {user?.email || "Anonymous user"}
+              </span>
+              <span className="rounded-full bg-indigo-100 text-indigo-700 px-4 py-2 text-sm font-medium">
+                {messages.length} messages
+              </span>
+            </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:w-auto">
+          <div className="flex flex-wrap gap-3">
             <button
               onClick={() => setShowHelp((prev) => !prev)}
-              className="rounded-xl bg-amber-100 px-3 py-2 text-xs font-semibold text-amber-800 transition hover:bg-amber-200 sm:text-sm"
+              className="rounded-2xl bg-amber-100 text-amber-800 px-5 py-3 font-medium hover:bg-amber-200 transition"
             >
-              {showHelp ? "Hide urgent help" : "Urgent help"}
+              {showHelp ? "Hide Support Info" : "Urgent Help"}
             </button>
 
             <button
               onClick={handleClearChat}
-              className="rounded-xl bg-red-100 px-3 py-2 text-xs font-semibold text-red-700 transition hover:bg-red-200 sm:text-sm"
+              className="rounded-2xl bg-red-100 text-red-700 px-5 py-3 font-medium hover:bg-red-200 transition"
             >
-              Clear chat
-            </button>
-
-            <button
-              onClick={() => navigate("/home")}
-              className="rounded-xl bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-700 transition hover:bg-gray-200 sm:text-sm"
-            >
-              Dashboard
+              Clear Chat
             </button>
           </div>
         </div>
-      </header>
+      </section>
 
       {showHelp && (
-        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4">
-          <h2 className="text-lg font-semibold text-amber-800">
-            Need urgent support?
-          </h2>
-          <p className="mt-2 text-sm text-amber-700">
-            Reach out to someone near you right away: a friend, family member,
-            teacher, counselor, or another trusted person.
-          </p>
-          <div className="mt-3 space-y-1 text-sm text-amber-900">
-            <p><strong>Tele-MANAS:</strong> 14416</p>
-            <p><strong>Toll-free:</strong> 1800-89-14416</p>
-            <p><strong>Available:</strong> 24/7 mental health support</p>
+        <section className="bg-white rounded-[28px] shadow-lg border border-amber-100 p-6">
+          <div className="rounded-2xl bg-amber-50 border border-amber-200 p-5">
+            <h2 className="text-xl font-semibold text-amber-800">
+              Need urgent support?
+            </h2>
+            <p className="text-sm text-amber-700 mt-2 leading-relaxed">
+              If you feel unsafe or overwhelmed, please reach out to someone
+              near you right away.
+            </p>
+
+            <div className="mt-4 grid sm:grid-cols-3 gap-3">
+              <div className="rounded-xl bg-white/80 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-amber-600">
+                  Tele-MANAS
+                </p>
+                <p className="text-lg font-bold text-amber-900 mt-1">14416</p>
+              </div>
+
+              <div className="rounded-xl bg-white/80 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-amber-600">
+                  Toll-Free
+                </p>
+                <p className="text-lg font-bold text-amber-900 mt-1">
+                  1800-89-14416
+                </p>
+              </div>
+
+              <div className="rounded-xl bg-white/80 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-amber-600">
+                  Availability
+                </p>
+                <p className="text-lg font-bold text-amber-900 mt-1">24/7</p>
+              </div>
+            </div>
           </div>
-        </div>
+        </section>
       )}
 
-      <div className="rounded-3xl border border-gray-100 bg-white p-3 shadow-sm sm:p-5">
-        <div className="h-[52vh] min-h-[300px] max-h-[520px] space-y-3 overflow-y-auto rounded-2xl border border-gray-100 bg-gray-50 p-3 sm:p-4">
+      <section className="bg-white rounded-[24px] md:rounded-[28px] shadow-lg border border-gray-100 p-3 sm:p-4 md:p-6">
+        <div className="rounded-[20px] md:rounded-[24px] border border-gray-100 bg-gradient-to-b from-gray-50 to-white h-[400px] sm:h-[470px] md:h-[520px] overflow-y-auto p-3 sm:p-4 md:p-6 space-y-4">
           {messages.length === 0 ? (
-            <p className="mt-20 text-center text-gray-400">
-              Start by sharing how you feel today.
-            </p>
+            <div className="h-full flex items-center justify-center">
+              <div className="max-w-md text-center">
+                <div className="text-5xl mb-4">💬</div>
+                <h3 className="text-xl font-semibold text-gray-800">
+                  Start a gentle conversation
+                </h3>
+                <p className="text-gray-500 mt-2 leading-relaxed">
+                  Share what’s on your mind.
+                </p>
+              </div>
+            </div>
           ) : (
             messages.map((msg, index) => (
               <div
                 key={msg.id || index}
-                className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
+                className={`flex ${msg.sender === "user" ? "justify-end" : "justify-start"
+                  }`}
               >
-                <div
-                  className={`max-w-[90%] rounded-2xl px-3 py-2.5 text-sm leading-relaxed shadow-sm whitespace-pre-wrap sm:max-w-[76%] sm:px-4 sm:py-3 ${msg.sender === "user"
-                    ? "bg-indigo-600 text-white"
-                    : msg.text.includes("Tele-MANAS") || msg.text.includes("14416")
-                      ? "border border-red-200 bg-red-50 text-red-900"
-                      : "border border-gray-200 bg-white text-gray-800"
-                    }`}
-                >
-                  {msg.text}
+                <div className="max-w-[90%] sm:max-w-[85%] md:max-w-[75%]">
+                  <p
+                    className={`text-xs mb-1 px-1 ${msg.sender === "user"
+                      ? "text-right text-indigo-500"
+                      : isCrisisReply(msg.text)
+                        ? "text-red-500"
+                        : "text-gray-400"
+                      }`}
+                  >
+                    {msg.sender === "user"
+                      ? "You"
+                      : isCrisisReply(msg.text)
+                        ? "Urgent Support"
+                        : "AI Support"}
+                  </p>
+
+                  <div
+                    className={`rounded-3xl px-4 py-3 text-sm md:text-[15px] leading-relaxed shadow-sm whitespace-pre-wrap ${msg.sender === "user"
+                      ? "bg-indigo-600 text-white rounded-br-md"
+                      : isCrisisReply(msg.text)
+                        ? "bg-red-50 border border-red-200 text-red-900 rounded-bl-md"
+                        : "bg-white border border-gray-200 text-gray-800 rounded-bl-md"
+                      }`}
+                  >
+                    {msg.text}
+                  </div>
                 </div>
               </div>
             ))
@@ -214,37 +294,45 @@ function Chat() {
 
           {loading && (
             <div className="flex justify-start">
-              <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-500">
+              <div className="max-w-[75%] rounded-3xl rounded-bl-md bg-white border border-gray-200 text-gray-500 px-4 py-3 text-sm shadow-sm">
                 Typing...
               </div>
             </div>
           )}
+
+          <div ref={messagesEndRef} />
         </div>
 
-        <div className="mt-3 flex flex-col gap-2.5 sm:flex-row">
-          <input
-            type="text"
-            placeholder="Type what is on your mind..."
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            className="w-full flex-1 rounded-2xl border border-gray-300 px-4 py-2.5 text-sm outline-none transition focus:ring-2 focus:ring-indigo-300 sm:py-3"
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                handleSend();
-              }
-            }}
-          />
+        <div className="mt-4 md:mt-5 rounded-[20px] md:rounded-[24px] border border-gray-100 bg-gray-50 p-3 md:p-4">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <input
+              type="text"
+              placeholder="Type what’s on your mind..."
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              className="flex-1 rounded-2xl border border-gray-300 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-300"
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSend();
+                }
+              }}
+            />
 
-          <button
-            onClick={handleSend}
-            disabled={loading}
-            className="rounded-2xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-60 sm:px-6 sm:py-3"
-          >
-            Send
-          </button>
+            <button
+              onClick={handleSend}
+              disabled={loading}
+              className="rounded-2xl bg-indigo-600 text-white px-6 py-3 font-medium hover:bg-indigo-700 transition disabled:opacity-60"
+            >
+              Send
+            </button>
+          </div>
+
+          <p className="text-xs text-gray-400 mt-3 px-1">
+            This space offers supportive conversation and reflection.
+          </p>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 }
 
