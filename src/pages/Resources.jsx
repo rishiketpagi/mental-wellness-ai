@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 const RESOURCES = [
     {
         title: "Exam Stress",
-        emoji: "📚",
+
         color: "indigo",
         desc: "Managing academic pressure",
         tips: [
@@ -15,7 +15,7 @@ const RESOURCES = [
     },
     {
         title: "Anxiety & Overthinking",
-        emoji: "🌀",
+
         color: "violet",
         desc: "Calming a busy mind",
         tips: [
@@ -27,7 +27,6 @@ const RESOURCES = [
     },
     {
         title: "Sleep Support",
-        emoji: "🌙",
         color: "blue",
         desc: "Building restful habits",
         tips: [
@@ -39,7 +38,7 @@ const RESOURCES = [
     },
     {
         title: "Grounding Exercise",
-        emoji: "🌿",
+
         color: "emerald",
         desc: "5-4-3-2-1 technique",
         tips: [
@@ -52,7 +51,7 @@ const RESOURCES = [
     },
     {
         title: "When You Feel Low",
-        emoji: "💙",
+
         color: "rose",
         desc: "Small steps when it's hard",
         tips: [
@@ -64,7 +63,7 @@ const RESOURCES = [
     },
     {
         title: "Urgent Help",
-        emoji: "🆘",
+
         color: "amber",
         desc: "Crisis support resources",
         tips: [
@@ -156,9 +155,8 @@ function Resources() {
                     return (
                         <div
                             key={index}
-                            className={`group rounded-3xl border bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md overflow-hidden ${
-                                isUrgent ? "border-amber-200" : "border-gray-100"
-                            }`}
+                            className={`group rounded-3xl border bg-white shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md overflow-hidden ${isUrgent ? "border-amber-200" : "border-gray-100"
+                                }`}
                         >
                             {/* Card header gradient */}
                             <div className={`bg-gradient-to-r ${c.header} p-5`}>
