@@ -50,7 +50,7 @@ function Journal() {
             setJournalText("");
             navigate("/home");
         } catch (error) {
-            console.error("Error saving journal:", error);
+            console.error("Error saving journal:", error.response?.data || error.message);
         } finally {
             setLoading(false);
         }
@@ -135,11 +135,10 @@ function Journal() {
                     <button
                         onClick={handleSaveJournal}
                         disabled={loading || !journalText.trim()}
-                        className={`rounded-xl px-6 py-2.5 text-sm font-bold text-white transition-all duration-200 ${
-                            !loading && journalText.trim()
+                        className={`rounded-xl px-6 py-2.5 text-sm font-bold text-white transition-all duration-200 ${!loading && journalText.trim()
                                 ? "bg-gradient-to-r from-violet-500 to-indigo-600 shadow-md shadow-violet-200 hover:shadow-lg hover:shadow-violet-200 hover:-translate-y-0.5"
                                 : "bg-gray-300 cursor-not-allowed"
-                        }`}
+                            }`}
                     >
                         {loading ? "Analyzing…" : "Save & Reflect ✨"}
                     </button>
