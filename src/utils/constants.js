@@ -1,0 +1,62 @@
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+
+export const MOODS = [
+    {
+        value: "Happy",
+        emoji: "😊",
+        label: "Happy",
+        desc: "Feeling good and positive",
+        bg: "from-green-50 to-emerald-50",
+        border: "border-emerald-200",
+        active: "from-emerald-400 to-green-500",
+        ring: "ring-emerald-300",
+        text: "text-emerald-700",
+        badge: "bg-emerald-100 text-emerald-700",
+    },
+    {
+        value: "Neutral",
+        emoji: "😐",
+        label: "Neutral",
+        desc: "Neither good nor bad",
+        bg: "from-yellow-50 to-amber-50",
+        border: "border-amber-200",
+        active: "from-amber-400 to-yellow-500",
+        ring: "ring-amber-300",
+        text: "text-amber-700",
+        badge: "bg-amber-100 text-amber-700",
+    },
+    {
+        value: "Sad",
+        emoji: "😔",
+        label: "Sad",
+        desc: "Feeling down or heavy",
+        bg: "from-blue-50 to-sky-50",
+        border: "border-blue-200",
+        active: "from-blue-400 to-sky-500",
+        ring: "ring-blue-300",
+        text: "text-blue-700",
+        badge: "bg-blue-100 text-blue-700",
+    },
+    {
+        value: "Stressed",
+        emoji: "😣",
+        label: "Stressed",
+        desc: "Overwhelmed or anxious",
+        bg: "from-red-50 to-rose-50",
+        border: "border-red-200",
+        active: "from-red-400 to-rose-500",
+        ring: "ring-red-300",
+        text: "text-red-700",
+        badge: "bg-red-100 text-red-700",
+    },
+];
+
+export const JOURNAL_PROMPTS = [
+    "What is one small thing that felt okay today?",
+    "What has been taking most of your energy lately?",
+    "What would help you feel 1% lighter right now?",
+    "What is one thought you want to let go of?",
+    "Who is one person you feel safe talking to?",
+    "What is one kind thing you can do for yourself today?",
+    "What helped you get through a hard moment recently?",
+];

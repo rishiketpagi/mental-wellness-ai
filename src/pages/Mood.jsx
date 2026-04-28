@@ -1,58 +1,8 @@
 import { useState } from "react";
-import { auth, db } from "../firebase";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { auth } from "../firebase";
+import { MOODS } from "../utils/constants";
+import { saveMoodToFirestore } from "../services/moodService";
 import { useNavigate } from "react-router-dom";
-
-const MOODS = [
-    {
-        value: "Happy",
-        emoji: "😊",
-        label: "Happy",
-        desc: "Feeling good and positive",
-        bg: "from-green-50 to-emerald-50",
-        border: "border-emerald-200",
-        active: "from-emerald-400 to-green-500",
-        ring: "ring-emerald-300",
-        text: "text-emerald-700",
-        badge: "bg-emerald-100 text-emerald-700",
-    },
-    {
-        value: "Neutral",
-        emoji: "😐",
-        label: "Neutral",
-        desc: "Neither good nor bad",
-        bg: "from-yellow-50 to-amber-50",
-        border: "border-amber-200",
-        active: "from-amber-400 to-yellow-500",
-        ring: "ring-amber-300",
-        text: "text-amber-700",
-        badge: "bg-amber-100 text-amber-700",
-    },
-    {
-        value: "Sad",
-        emoji: "😔",
-        label: "Sad",
-        desc: "Feeling down or heavy",
-        bg: "from-blue-50 to-sky-50",
-        border: "border-blue-200",
-        active: "from-blue-400 to-sky-500",
-        ring: "ring-blue-300",
-        text: "text-blue-700",
-        badge: "bg-blue-100 text-blue-700",
-    },
-    {
-        value: "Stressed",
-        emoji: "😣",
-        label: "Stressed",
-        desc: "Overwhelmed or anxious",
-        bg: "from-red-50 to-rose-50",
-        border: "border-red-200",
-        active: "from-red-400 to-rose-500",
-        ring: "ring-red-300",
-        text: "text-red-700",
-        badge: "bg-red-100 text-red-700",
-    },
-];
 
 function Mood() {
     const navigate = useNavigate();
@@ -66,12 +16,7 @@ function Mood() {
             const user = auth.currentUser;
             if (!user) return;
             setSaving(true);
-            await addDoc(collection(db, "moods"), {
-                userId: user.uid,
-                mood: selected,
-                note,
-                createdAt: serverTimestamp(),
-            });
+            await saveMoodToFirestore(user.uid, selected, note);
             setNote("");
             setSelected(null);
             navigate("/home");
@@ -116,11 +61,10 @@ function Mood() {
                             <button
                                 key={mood.value}
                                 onClick={() => setSelected(mood.value)}
-                                className={`group relative flex flex-col items-center gap-2 rounded-2xl border-2 bg-gradient-to-b p-4 text-center transition-all duration-200 sm:p-5 ${
-                                    isSelected
-                                        ? `${mood.border} ${mood.bg} ring-2 ${mood.ring} scale-[1.03] shadow-md`
-                                        : "border-gray-100 bg-white hover:border-gray-200 hover:shadow-sm"
-                                }`}
+                                className={`group relative flex flex-col items-center gap-2 rounded-2xl border-2 bg-gradient-to-b p-4 text-center transition-all duration-200 sm:p-5 ${isSelected
+                                    ? `${mood.border} ${mood.bg} ring-2 ${mood.ring} scale-[1.03] shadow-md`
+                                    : "border-gray-100 bg-white hover:border-gray-200 hover:shadow-sm"
+                                    }`}
                             >
                                 <span className={`text-4xl transition-transform duration-200 ${isSelected ? "scale-110" : "group-hover:scale-105"}`}>
                                     {mood.emoji}
@@ -169,11 +113,10 @@ function Mood() {
                     <button
                         onClick={saveMood}
                         disabled={!selected || saving}
-                        className={`rounded-xl px-6 py-2.5 text-sm font-bold text-white transition-all duration-200 ${
-                            selected && !saving
-                                ? "bg-gradient-to-r from-indigo-500 to-violet-600 shadow-md shadow-indigo-200 hover:shadow-lg hover:shadow-indigo-200 hover:-translate-y-0.5"
-                                : "bg-gray-300 cursor-not-allowed"
-                        }`}
+                        className={`rounded-xl px-6 py-2.5 text-sm font-bold text-white transition-all duration-200 ${selected && !saving
+                            ? "bg-gradient-to-r from-indigo-500 to-violet-600 shadow-md shadow-indigo-200 hover:shadow-lg hover:shadow-indigo-200 hover:-translate-y-0.5"
+                            : "bg-gray-300 cursor-not-allowed"
+                            }`}
                     >
                         {saving
                             ? "Saving…"
