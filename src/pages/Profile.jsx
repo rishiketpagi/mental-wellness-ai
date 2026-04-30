@@ -12,6 +12,7 @@ import {
     where,
     getDocs,
 } from "firebase/firestore";
+import { uploadProfilePicture } from "../services/uploadService";
 
 /* ── inject keyframes once ─────────────────────────────────────────────── */
 if (!document.getElementById("profile-kf")) {
@@ -112,6 +113,8 @@ export default function Profile() {
     const [savingName, setSavingName] = useState(false);
     const [sendingVerification, setSendingVerification] = useState(false);
     const [banner, setBanner] = useState(null);
+    const [photoURL, setPhotoURL] = useState("");
+    const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
     /* fetch ─────────────────────────────────────────────────────────── */
     const fetchProfileData = async () => {
@@ -122,6 +125,7 @@ export default function Profile() {
                 const d = snap.data();
                 setDisplayName(d.displayName || "");
                 setTempName(d.displayName || "");
+                setPhotoURL(d.photoURL || "");
             }
             const mSnap = await getDocs(query(collection(db, "moods"), where("userId", "==", user.uid)));
             setMoodCount(mSnap.size);
@@ -173,6 +177,35 @@ export default function Profile() {
         }
     };
 
+    const handlePhotoUpload = async (e) => {
+        const file = e.target.files?.[0];
+        if (!file || !user) return;
+
+        if (!file.type.startsWith("image/")) {
+            setBanner({ ok: false, msg: "Please select a valid image file." });
+            return;
+        }
+
+        setUploadingPhoto(true);
+
+        try {
+            const imageUrl = await uploadProfilePicture(file);
+
+            await updateDoc(doc(db, "users", user.uid), {
+                photoURL: imageUrl,
+            });
+
+            setPhotoURL(imageUrl);
+            setBanner({ ok: true, msg: "Profile picture updated!" });
+        } catch (error) {
+            console.error(error);
+            setBanner({ ok: false, msg: "Failed to upload photo. Try again." });
+        } finally {
+            setUploadingPhoto(false);
+            setTimeout(() => setBanner(null), 4000);
+        }
+    };
+
     const handleLogout = async () => {
         try { await signOut(auth); navigate("/"); } catch (e) { console.error(e); }
     };
@@ -207,9 +240,31 @@ export default function Profile() {
                     {/* Avatar + name */}
                     <div className="flex items-center gap-5">
                         <div className="relative">
-                            <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-white/20 text-3xl font-extrabold text-white shadow-lg backdrop-blur-sm ring-4 ring-white/30 sm:h-24 sm:w-24 sm:text-4xl">
-                                {initial}
-                            </div>
+                            <label className="relative cursor-pointer group">
+                                <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-3xl bg-white/20 text-3xl font-extrabold text-white shadow-lg backdrop-blur-sm ring-4 ring-white/30 sm:h-24 sm:w-24 sm:text-4xl">
+                                    {photoURL ? (
+                                        <img
+                                            src={photoURL}
+                                            alt="Profile"
+                                            className="h-full w-full object-cover"
+                                        />
+                                    ) : (
+                                        initial
+                                    )}
+                                </div>
+
+                                <div className="absolute inset-0 flex items-center justify-center rounded-3xl bg-black/40 text-xs font-bold text-white opacity-0 transition group-hover:opacity-100">
+                                    {uploadingPhoto ? "Uploading..." : "Change"}
+                                </div>
+
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handlePhotoUpload}
+                                    className="hidden"
+                                    disabled={uploadingPhoto}
+                                />
+                            </label>
                             {/* online dot */}
                             <div className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full border-2 border-violet-600 bg-emerald-400 shadow" />
                         </div>
