@@ -5,13 +5,6 @@ const { GoogleGenAI } = require("@google/genai");
 
 dotenv.config();
 
-cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-const cloudinary = require("cloudinary").v2;
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -22,23 +15,6 @@ const ai = new GoogleGenAI({
 
 app.get("/", (req, res) => {
     res.send("Backend is running");
-});
-
-app.post("/delete-profile-image", async (req, res) => {
-    try {
-        const { publicId } = req.body;
-
-        if (!publicId) {
-            return res.status(400).json({ error: "publicId is required" });
-        }
-
-        await cloudinary.uploader.destroy(publicId);
-
-        res.json({ success: true });
-    } catch (error) {
-        console.error("Cloudinary delete error:", error);
-        res.status(500).json({ error: "Failed to delete image" });
-    }
 });
 
 app.post("/analyze-journal", async (req, res) => {

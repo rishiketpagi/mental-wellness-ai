@@ -5,6 +5,7 @@ export async function uploadProfilePicture(file) {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", uploadPreset);
+    formData.append("folder", "calmora/profile-pictures");
 
     const response = await fetch(
         `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
@@ -15,10 +16,9 @@ export async function uploadProfilePicture(file) {
     );
 
     if (!response.ok) {
-        throw new Error("Upload failed");
+        throw new Error("Cloudinary upload failed");
     }
 
     const data = await response.json();
-
     return data.secure_url;
 }
