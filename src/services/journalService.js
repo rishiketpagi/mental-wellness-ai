@@ -1,5 +1,5 @@
 import axios from "axios";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, limit } from "firebase/firestore";
 import { db } from "../firebase";
 import { API_BASE_URL } from "../utils/constants";
 
@@ -21,4 +21,21 @@ export async function saveJournalToFirestore(userId, journalText, analysis) {
         suggestion: analysis.suggestion,
         createdAt: serverTimestamp(),
     });
+}
+
+/**
+ * Fetch recent journals for a user (latest 3).
+ */
+export async function fetchRecentJournals(userId) {
+    const q = query(
+        collection(db, "journals"),
+        where("userId", "==", userId),
+        orderBy("createdAt", "desc"),
+        limit(3)
+    );
+    const snap = await getDocs(q);
+    return snap.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+    }));
 }

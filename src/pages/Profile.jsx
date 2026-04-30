@@ -1,22 +1,21 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import { db, auth } from "../firebase";
+import { auth } from "../firebase";
 import { signOut, sendEmailVerification } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
-import {
-    doc,
-    getDoc,
-    updateDoc,
-    collection,
-    query,
-    where,
-    getDocs,
-} from "firebase/firestore";
 import { uploadProfilePicture } from "../services/uploadService";
+import {
+    getProfileDetails,
+    updateDisplayName,
+    savePhotoURL,
+    fetchProfileStats,
+    updateProfileDetails,
+} from "../services/profileService";
 
 import ProfileHero from "../components/profile/ProfileHero";
 import ProfileStats from "../components/profile/ProfileStats";
 import AccountDetails from "../components/profile/AccountDetails";
+import PersonalDetails from "../components/profile/PersonalDetails";
 import ProfileQuickActions from "../components/profile/QuickActions";
 import JourneyProgress from "../components/profile/JourneyProgress";
 
@@ -57,62 +56,44 @@ export default function Profile() {
     const [photoURL, setPhotoURL] = useState("");
     const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
-    const fetchProfileData = async () => {
-        if (!user) return;
-
-        try {
-            const snap = await getDoc(doc(db, "users", user.uid));
-
-            if (snap.exists()) {
-                const d = snap.data();
-                setDisplayName(d.displayName || "");
-                setTempName(d.displayName || "");
-                setPhotoURL(d.photoURL || "");
-            }
-
-            const mSnap = await getDocs(
-                query(collection(db, "moods"), where("userId", "==", user.uid))
-            );
-
-            setMoodCount(mSnap.size);
-
-            const jSnap = await getDocs(
-                query(collection(db, "journals"), where("userId", "==", user.uid))
-            );
-
-            setJournalCount(jSnap.size);
-
-            const dates = new Set(
-                mSnap.docs
-                    .map((d) => d.data())
-                    .filter((d) => d.createdAt)
-                    .map((d) => {
-                        const dt = d.createdAt.toDate();
-                        return `${dt.getFullYear()}-${dt.getMonth()}-${dt.getDate()}`;
-                    })
-            );
-
-            let s = 0;
-            const today = new Date();
-
-            for (let i = 0; i < 365; i++) {
-                const c = new Date();
-                c.setDate(today.getDate() - i);
-
-                const k = `${c.getFullYear()}-${c.getMonth()}-${c.getDate()}`;
-
-                if (dates.has(k)) s++;
-                else break;
-            }
-
-            setStreak(s);
-        } catch (e) {
-            console.error(e);
-        }
-    };
+    // Personal details state
+    const [age, setAge] = useState("");
+    const [gender, setGender] = useState("Prefer not to say");
+    const [bio, setBio] = useState("");
+    const [editingDetails, setEditingDetails] = useState(false);
+    const [tempAge, setTempAge] = useState("");
+    const [tempGender, setTempGender] = useState("Prefer not to say");
+    const [tempBio, setTempBio] = useState("");
+    const [savingDetails, setSavingDetails] = useState(false);
 
     useEffect(() => {
-        if (user) fetchProfileData();
+        if (!user) return;
+
+        const loadProfile = async () => {
+            try {
+                // Fetch profile from Firestore (photoURL comes from here, not Firebase Auth)
+                const profile = await getProfileDetails(user.uid);
+                setDisplayName(profile.displayName);
+                setTempName(profile.displayName);
+                setPhotoURL(profile.photoURL);
+                setAge(profile.age);
+                setGender(profile.gender);
+                setBio(profile.bio);
+                setTempAge(profile.age);
+                setTempGender(profile.gender);
+                setTempBio(profile.bio);
+
+                // Fetch stats
+                const stats = await fetchProfileStats(user.uid);
+                setMoodCount(stats.moodCount);
+                setJournalCount(stats.journalCount);
+                setStreak(stats.streak);
+            } catch (e) {
+                console.error(e);
+            }
+        };
+
+        loadProfile();
     }, [user]);
 
     const handleSaveName = async () => {
@@ -120,26 +101,55 @@ export default function Profile() {
         if (!user || !name) return;
 
         setSavingName(true);
-
         try {
-            await updateDoc(doc(db, "users", user.uid), {
-                displayName: name,
-            });
-
+            await updateDisplayName(user.uid, name);
             setDisplayName(name);
             setEditing(false);
+            setBanner({ ok: true, msg: "Display name updated!" });
         } catch (e) {
             console.error(e);
+            setBanner({ ok: false, msg: "Failed to update name." });
         } finally {
             setSavingName(false);
+            setTimeout(() => setBanner(null), 4000);
         }
+    };
+
+    const handleSaveDetails = async () => {
+        if (!user) return;
+
+        setSavingDetails(true);
+        try {
+            await updateProfileDetails(user.uid, {
+                age: tempAge,
+                gender: tempGender,
+                bio: tempBio,
+            });
+            setAge(tempAge);
+            setGender(tempGender);
+            setBio(tempBio);
+            setEditingDetails(false);
+            setBanner({ ok: true, msg: "Personal details updated!" });
+        } catch (e) {
+            console.error(e);
+            setBanner({ ok: false, msg: "Failed to update details." });
+        } finally {
+            setSavingDetails(false);
+            setTimeout(() => setBanner(null), 4000);
+        }
+    };
+
+    const handleCancelEditDetails = () => {
+        setEditingDetails(false);
+        setTempAge(age);
+        setTempGender(gender);
+        setTempBio(bio);
     };
 
     const handleResendVerification = async () => {
         if (!user || !user.email || user.emailVerified) return;
 
         setSendingVerification(true);
-
         try {
             await sendEmailVerification(user);
             setBanner({ ok: true, msg: "Verification email sent! Check your inbox." });
@@ -161,14 +171,11 @@ export default function Profile() {
         }
 
         setUploadingPhoto(true);
-
         try {
+            // Upload to Cloudinary
             const imageUrl = await uploadProfilePicture(file);
-
-            await updateDoc(doc(db, "users", user.uid), {
-                photoURL: imageUrl,
-            });
-
+            // Save to Firestore users/{uid}
+            await savePhotoURL(user.uid, imageUrl);
             setPhotoURL(imageUrl);
             setBanner({ ok: true, msg: "Profile picture updated!" });
         } catch (error) {
@@ -259,6 +266,23 @@ export default function Profile() {
 
                 <ProfileQuickActions navigate={navigate} />
             </div>
+
+            <PersonalDetails
+                age={age}
+                gender={gender}
+                bio={bio}
+                editing={editingDetails}
+                setEditing={setEditingDetails}
+                tempAge={tempAge}
+                setTempAge={setTempAge}
+                tempGender={tempGender}
+                setTempGender={setTempGender}
+                tempBio={tempBio}
+                setTempBio={setTempBio}
+                saving={savingDetails}
+                onSave={handleSaveDetails}
+                onCancel={handleCancelEditDetails}
+            />
 
             <JourneyProgress
                 streak={streak}
