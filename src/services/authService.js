@@ -32,7 +32,7 @@ export async function saveUserToFirestore(user, isAnonymous) {
             displayName: user.displayName || "",
             photoURL: user.photoURL || "",
             age: "",
-            gender: "Prefer not to say",
+            gender: "",
             bio: "",
             isAnonymous,
             emailVerified: user.emailVerified || false,

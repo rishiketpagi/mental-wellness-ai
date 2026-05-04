@@ -10,6 +10,7 @@ import AppLayout from "./components/layout/AppLayout";
 import Profile from "./pages/Profile";
 
 function App() {
+
   return (
     <BrowserRouter>
       <Routes>

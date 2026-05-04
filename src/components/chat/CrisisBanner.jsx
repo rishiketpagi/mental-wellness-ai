@@ -2,7 +2,23 @@ export default function CrisisBanner() {
     return (
         <section className="rounded-3xl border border-amber-200 bg-amber-50 p-5 sm:p-6">
             <div className="flex items-start gap-3 mb-4">
-                <span className="text-2xl">🆘</span>
+                <span className="text-2xl">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    >
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+                        <path d="M12 8v4" />
+                        <path d="M12 16h.01" />
+                    </svg>
+                </span>
                 <div>
                     <h2 className="text-base font-bold text-amber-900 sm:text-lg">
                         Need urgent support?

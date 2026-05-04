@@ -83,7 +83,7 @@ function TopNav() {
                         🧠
                     </div>
                     <span className="truncate text-sm font-bold tracking-tight text-indigo-700 sm:text-base">
-                        Mental Wellness AI
+                        Calmora - Mental Wellness AI
                     </span>
                 </div>
 
@@ -95,11 +95,10 @@ function TopNav() {
                             <button
                                 key={tab.path}
                                 onClick={() => handleNavigate(tab.path)}
-                                className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium transition-all duration-200 ${
-                                    isActive
+                                className={`flex items-center gap-1.5 rounded-xl px-3 py-2 text-sm font-medium transition-all duration-200 ${isActive
                                         ? "bg-indigo-600 text-white shadow-sm shadow-indigo-200"
                                         : "text-gray-600 hover:bg-indigo-50 hover:text-indigo-700"
-                                }`}
+                                    }`}
                             >
                                 <span className={isActive ? "opacity-100" : "opacity-60"}>
                                     {tab.icon}
@@ -132,11 +131,10 @@ function TopNav() {
                             <button
                                 key={tab.path}
                                 onClick={() => handleNavigate(tab.path)}
-                                className={`flex flex-col items-center gap-1.5 rounded-xl px-2 py-3 text-xs font-semibold transition-all ${
-                                    isActive
+                                className={`flex flex-col items-center gap-1.5 rounded-xl px-2 py-3 text-xs font-semibold transition-all ${isActive
                                         ? "bg-indigo-600 text-white shadow-sm"
                                         : "bg-gray-50 text-gray-600 hover:bg-indigo-50 hover:text-indigo-700"
-                                }`}
+                                    }`}
                             >
                                 <span className="scale-110">{tab.icon}</span>
                                 {tab.name}

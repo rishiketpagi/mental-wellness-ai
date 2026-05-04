@@ -13,7 +13,7 @@ export default function MessageBubble({ msg, index }) {
                         ? "text-red-500"
                         : "text-emerald-500"
                     }`}>
-                    {isUser ? "You" : isCrisis ? "⚠ Urgent Support" : "🤖 AI Support"}
+                    {isUser ? "You" : isCrisis ? "⚠ Urgent Support" : "🤖 Calmora AI"}
                 </p>
                 <div className={`rounded-3xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap shadow-sm ${isUser
                     ? "rounded-br-md bg-gradient-to-br from-indigo-500 to-violet-600 text-white"

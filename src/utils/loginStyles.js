@@ -298,4 +298,43 @@ export const S = {
         animation: "slideDown 0.3s ease",
         fontFamily: "Manrope, sans-serif",
     }),
+    tabs: {
+        position: "relative", // Crucial: bounds the absolute indicator
+        display: "flex",
+        background: "rgba(240, 244, 248, 0.8)", // Subtle background for the track
+        borderRadius: "12px",
+        padding: "6px",
+        width: "100%",
+        maxWidth: "340px",
+        margin: "0 auto",
+    },
+
+    activeIndicator: (tab) => ({
+        position: "absolute",
+        top: "6px",
+        bottom: "6px",
+        width: "calc(50% - 6px)", // Takes up half the container minus padding
+        background: "linear-gradient(135deg, #818cf8 0%, #6366f1 50%, #4f46e5 100%)",
+        boxShadow: "0 4px 15px rgba(79, 70, 229, 0.3)", // Adds a soft glow that matches the gradient
+        borderRadius: "8px",
+        zIndex: 0,
+        // The smooth animation:
+        transition: "transform 0.4s cubic-bezier(0.4, 0.0, 0.2, 1)",
+        transform: tab === "login" ? "translateX(0)" : "translateX(100%)",
+    }),
+
+    tab: (isActive) => ({
+        flex: 1,
+        position: "relative",
+        zIndex: 1, // Keeps the text above the sliding indicator
+        padding: "12px 0",
+        border: "none",
+        background: "transparent", // Must be transparent so the indicator shows through
+        color: isActive ? "#ffffff" : "#64748b", // White text when active, gray when inactive
+        fontWeight: "600",
+        fontSize: "1rem",
+        cursor: "pointer",
+        transition: "color 0.4s ease", // Smoothly fades the text color
+        outline: "none",
+    }),
 };

@@ -1,7 +1,9 @@
+import React from 'react';
+
 export const RESOURCES = [
     {
         title: "Exam Stress",
-        emoji: "📚",
+        iconKey: "indigo", // Reference the key in RESOURCE_ICONS
         color: "indigo",
         desc: "Managing academic pressure",
         tips: [
@@ -13,7 +15,7 @@ export const RESOURCES = [
     },
     {
         title: "Anxiety & Overthinking",
-        emoji: "🧠",
+        iconKey: "violet",
         color: "violet",
         desc: "Calming a busy mind",
         tips: [
@@ -25,7 +27,7 @@ export const RESOURCES = [
     },
     {
         title: "Sleep Support",
-        emoji: "🌙",
+        iconKey: "blue",
         color: "blue",
         desc: "Building restful habits",
         tips: [
@@ -37,7 +39,7 @@ export const RESOURCES = [
     },
     {
         title: "Grounding Exercise",
-        emoji: "🌿",
+        iconKey: "emerald",
         color: "emerald",
         desc: "5-4-3-2-1 technique",
         tips: [
@@ -50,7 +52,7 @@ export const RESOURCES = [
     },
     {
         title: "When You Feel Low",
-        emoji: "💙",
+        iconKey: "rose",
         color: "rose",
         desc: "Small steps when it's hard",
         tips: [
@@ -62,7 +64,7 @@ export const RESOURCES = [
     },
     {
         title: "Urgent Help",
-        emoji: "🆘",
+        iconKey: "amber",
         color: "amber",
         desc: "Crisis support resources",
         tips: [
