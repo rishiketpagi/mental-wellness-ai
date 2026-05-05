@@ -1,5 +1,17 @@
 import axios from "axios";
-import { collection, addDoc, serverTimestamp, query, where, getDocs, orderBy, limit } from "firebase/firestore";
+import {
+    collection,
+    addDoc,
+    serverTimestamp,
+    query,
+    where,
+    getDocs,
+    orderBy,
+    limit,
+    deleteDoc,
+    doc,
+    updateDoc,
+} from "firebase/firestore";
 import { db } from "../firebase";
 import { API_BASE_URL } from "../utils/constants";
 
@@ -20,6 +32,17 @@ export async function saveJournalToFirestore(userId, journalText, analysis) {
         reflection: analysis.reflection,
         suggestion: analysis.suggestion,
         createdAt: serverTimestamp(),
+    });
+}
+
+export async function deleteJournalById(id) {
+    return await deleteDoc(doc(db, "journals", id));
+}
+
+export async function updateJournalById(id, updates) {
+    return await updateDoc(doc(db, "journals", id), {
+        ...updates,
+        updatedAt: serverTimestamp(),
     });
 }
 

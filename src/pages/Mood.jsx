@@ -1,7 +1,11 @@
 import { useState } from "react";
 import { auth } from "../firebase";
 import { MOODS } from "../utils/constants";
-import { saveMoodToFirestore } from "../services/moodService";
+import {
+    saveMoodToFirestore,
+    deleteMoodById,
+    updateMoodById,
+} from "../services/moodService";
 import { useNavigate } from "react-router-dom";
 import useMood from "../hooks/useMood";
 import MoodSelector from "../components/mood/MoodSelector";
@@ -14,6 +18,7 @@ function Mood() {
     const [note, setNote] = useState("");
     const [selected, setSelected] = useState(null);
     const [saving, setSaving] = useState(false);
+    const [editingId, setEditingId] = useState(null);
 
     const user = auth.currentUser;
     const { recentMoods, weeklySummary, loading, refetch } = useMood(user?.uid);
@@ -23,9 +28,17 @@ function Mood() {
         try {
             if (!user) return;
             setSaving(true);
-            await saveMoodToFirestore(user.uid, selected, note);
+            if (editingId) {
+                await updateMoodById(editingId, {
+                    mood: selected,
+                    note,
+                });
+            } else {
+                await saveMoodToFirestore(user.uid, selected, note);
+            }
             setNote("");
             setSelected(null);
+            setEditingId(null);
             // Refetch recent moods after saving
             await refetch();
         } catch (error) {
@@ -36,6 +49,31 @@ function Mood() {
     };
 
     const selectedMood = MOODS.find((m) => m.value === selected);
+    const handleDeleteMood = async (id) => {
+        try {
+            await deleteMoodById(id);
+            if (editingId === id) {
+                setEditingId(null);
+                setNote("");
+                setSelected(null);
+            }
+            await refetch();
+        } catch (error) {
+            console.error("Delete mood error:", error.message);
+        }
+    };
+
+    const handleEditMood = (mood) => {
+        setEditingId(mood.id);
+        setSelected(mood.mood);
+        setNote(mood.note || "");
+    };
+
+    const cancelEdit = () => {
+        setEditingId(null);
+        setSelected(null);
+        setNote("");
+    };
 
     return (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-5">
@@ -63,7 +101,9 @@ function Mood() {
 
                 {/* Mood Cards + Note + Actions */}
                 <div className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm sm:p-7">
-                    <p className="mb-4 text-sm font-semibold text-gray-700">Select your mood</p>
+                    <p className="mb-4 text-sm font-semibold text-gray-700">
+                        {editingId ? "Editing mood" : "Select your mood"}
+                    </p>
 
                     <MoodSelector selected={selected} onSelect={setSelected} />
 
@@ -78,27 +118,45 @@ function Mood() {
                             ← Back
                         </button>
 
-                        <button
-                            onClick={saveMood}
-                            disabled={!selected || saving}
-                            className={`rounded-xl px-6 py-2.5 text-sm font-bold text-white transition-all duration-200 ${selected && !saving
-                                ? "bg-gradient-to-r from-indigo-500 to-violet-600 shadow-md shadow-indigo-200 hover:shadow-lg hover:shadow-indigo-200 hover:-translate-y-0.5"
-                                : "bg-gray-300 cursor-not-allowed"
-                                }`}
-                        >
-                            {saving
-                                ? "Saving…"
-                                : selected
-                                    ? `Log ${selectedMood?.emoji} ${selected}`
-                                    : "Select a mood first"}
-                        </button>
+                        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:gap-2.5">
+                            {editingId && (
+                                <button
+                                    onClick={cancelEdit}
+                                    className="rounded-xl bg-gray-100 px-5 py-2.5 text-sm font-semibold text-gray-600 transition hover:bg-gray-200"
+                                >
+                                    Cancel edit
+                                </button>
+                            )}
+
+                            <button
+                                onClick={saveMood}
+                                disabled={!selected || saving}
+                                className={`rounded-xl px-6 py-2.5 text-sm font-bold text-white transition-all duration-200 ${selected && !saving
+                                    ? "bg-gradient-to-r from-indigo-500 to-violet-600 shadow-md shadow-indigo-200 hover:shadow-lg hover:shadow-indigo-200 hover:-translate-y-0.5"
+                                    : "bg-gray-300 cursor-not-allowed"
+                                    }`}
+                            >
+                                {saving
+                                    ? "Saving…"
+                                    : selected
+                                        ? editingId
+                                            ? "Save changes"
+                                            : `Log ${selectedMood?.emoji} ${selected}`
+                                        : "Select a mood first"}
+                            </button>
+                        </div>
                     </div>
                 </div>
             </section>
 
             {/* Right: Recent Moods + Summary */}
             <section className="lg:col-span-2 space-y-4">
-                <RecentMoods recentMoods={recentMoods} loading={loading} />
+                <RecentMoods
+                    recentMoods={recentMoods}
+                    loading={loading}
+                    onEdit={handleEditMood}
+                    onDelete={handleDeleteMood}
+                />
                 <MoodSummary weeklySummary={weeklySummary} loading={loading} />
             </section>
         </div>

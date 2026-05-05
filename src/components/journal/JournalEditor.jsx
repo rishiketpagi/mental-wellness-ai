@@ -1,11 +1,19 @@
-export default function JournalEditor({ journalText, onChange, loading, onSave, onBack }) {
+export default function JournalEditor({
+    journalText,
+    onChange,
+    loading,
+    onSave,
+    onBack,
+    isEditing,
+    onCancelEdit,
+}) {
     const charCount = journalText.length;
 
     return (
         <div className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm sm:p-7">
             <div className="mb-2 flex items-center justify-between">
                 <label className="text-sm font-semibold text-gray-700">
-                    Your reflection
+                    {isEditing ? "Editing reflection" : "Your reflection"}
                 </label>
                 <span className={`text-xs font-medium ${charCount > 0 ? "text-violet-500" : "text-gray-300"}`}>
                     {charCount} characters
@@ -43,16 +51,28 @@ export default function JournalEditor({ journalText, onChange, loading, onSave, 
                     ← Back
                 </button>
 
-                <button
-                    onClick={onSave}
-                    disabled={loading || !journalText.trim()}
-                    className={`rounded-xl px-6 py-2.5 text-sm font-bold text-white transition-all duration-200 ${!loading && journalText.trim()
+                <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:gap-2.5">
+                    {isEditing && (
+                        <button
+                            onClick={onCancelEdit}
+                            className="rounded-xl bg-gray-100 px-5 py-2.5 text-sm font-semibold text-gray-600 transition hover:bg-gray-200"
+                            disabled={loading}
+                        >
+                            Cancel edit
+                        </button>
+                    )}
+
+                    <button
+                        onClick={onSave}
+                        disabled={loading || !journalText.trim()}
+                        className={`rounded-xl px-6 py-2.5 text-sm font-bold text-white transition-all duration-200 ${!loading && journalText.trim()
                             ? "bg-gradient-to-r from-violet-500 to-indigo-600 shadow-md shadow-violet-200 hover:shadow-lg hover:shadow-violet-200 hover:-translate-y-0.5"
                             : "bg-gray-300 cursor-not-allowed"
-                        }`}
-                >
-                    {loading ? "Analyzing…" : "Save & Reflect ✨"}
-                </button>
+                            }`}
+                    >
+                        {loading ? "Analyzing..." : isEditing ? "Save changes" : "Save & Reflect"}
+                    </button>
+                </div>
             </div>
         </div>
     );

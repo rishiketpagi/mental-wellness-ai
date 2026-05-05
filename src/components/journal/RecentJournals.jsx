@@ -16,7 +16,7 @@ const EMOTION_EMOJIS = {
     neutral: "😐",
 };
 
-export default function RecentJournals({ recentJournals, loading }) {
+export default function RecentJournals({ recentJournals, loading, onEdit, onDelete }) {
     const getEmotionColor = (emotion) => {
         const lower = emotion?.toLowerCase() || "neutral";
         return EMOTION_COLORS[lower] || EMOTION_COLORS.neutral;
@@ -76,9 +76,25 @@ export default function RecentJournals({ recentJournals, loading }) {
                                             </span>
                                         )}
                                     </div>
-                                    <time className="text-xs text-gray-500 shrink-0">
-                                        {formatDate(date)}
-                                    </time>
+                                    <div className="flex shrink-0 flex-col items-end gap-1.5">
+                                        <time className="text-xs text-gray-500">
+                                            {formatDate(date)}
+                                        </time>
+                                        <div className="flex gap-1.5">
+                                            <button
+                                                onClick={() => onEdit?.(journal)}
+                                                className="rounded-lg border border-white/80 bg-white/80 px-2.5 py-1 text-[11px] font-bold text-violet-700 transition hover:bg-white"
+                                            >
+                                                Edit
+                                            </button>
+                                            <button
+                                                onClick={() => onDelete?.(journal.id)}
+                                                className="rounded-lg bg-red-100 px-2.5 py-1 text-[11px] font-bold text-red-600 transition hover:bg-red-200"
+                                            >
+                                                Del
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                                 <p className="text-xs text-gray-700 line-clamp-2 leading-relaxed">
                                     {textPreview}

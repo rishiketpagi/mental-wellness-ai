@@ -1,7 +1,12 @@
 import { formatDate } from "../../utils/dateUtils";
 import { getMoodStyle } from "../../utils/homeUtils";
 
-export default function RecentMoods({ recentMoods, loading }) {
+export default function RecentMoods({
+    recentMoods,
+    loading,
+    onEdit,
+    onDelete,
+}) {
     const MOOD_EMOJIS = {
         Happy: "😊",
         Neutral: "😐",
@@ -39,7 +44,9 @@ export default function RecentMoods({ recentMoods, loading }) {
                     {recentMoods.map((mood) => {
                         const s = getMoodStyle(mood.mood);
                         const emoji = MOOD_EMOJIS[mood.mood] || "😊";
-                        const date = mood.createdAt?.toDate ? mood.createdAt.toDate() : new Date(mood.createdAt);
+                        const date = mood.createdAt?.toDate
+                            ? mood.createdAt.toDate()
+                            : new Date(mood.createdAt);
 
                         return (
                             <div
@@ -47,22 +54,42 @@ export default function RecentMoods({ recentMoods, loading }) {
                                 className={`rounded-2xl border p-3 sm:p-4 ${s.border} ${s.bg}`}
                             >
                                 <div className="flex items-start justify-between gap-2">
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-2 mb-1.5">
+                                    <div className="min-w-0 flex-1">
+                                        <div className="mb-1.5 flex items-center gap-2">
                                             <span className="text-xl">{emoji}</span>
-                                            <span className={`text-xs font-bold rounded-full px-2 py-0.5 ${s.badge}`}>
+                                            <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${s.badge}`}>
                                                 {mood.mood}
                                             </span>
                                         </div>
+
                                         {mood.note && (
-                                            <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">
+                                            <p className="line-clamp-2 text-xs leading-relaxed text-gray-600">
                                                 {mood.note}
                                             </p>
                                         )}
                                     </div>
-                                    <time className="text-xs text-gray-400 shrink-0">
-                                        {formatDate(date)}
-                                    </time>
+
+                                    <div className="flex shrink-0 flex-col items-end gap-1.5">
+                                        <time className="text-xs text-gray-400">
+                                            {formatDate(date)}
+                                        </time>
+
+                                        <div className="flex gap-1.5">
+                                            <button
+                                                onClick={() => onEdit?.(mood)}
+                                                className="rounded-lg border border-white/80 bg-white/80 px-2.5 py-1 text-[11px] font-bold text-indigo-700 transition hover:bg-white"
+                                            >
+                                                Edit
+                                            </button>
+
+                                            <button
+                                                onClick={() => onDelete?.(mood.id)}
+                                                className="rounded-lg bg-red-100 px-2.5 py-1 text-[11px] font-bold text-red-600 transition hover:bg-red-200"
+                                            >
+                                                Del
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         );
