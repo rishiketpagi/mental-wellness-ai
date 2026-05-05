@@ -2,7 +2,7 @@
 
 Calm, supportive wellness app with mood tracking, journaling, and guided insights.
 
-Live URL: https://calmora-livid.vercel.app/mood
+Live URL: https://calmora-livid.vercel.app
 
 ## Features
 
@@ -18,39 +18,3 @@ Live URL: https://calmora-livid.vercel.app/mood
 - Firebase Auth + Firestore
 - Express backend
 - Gemini API
-
-## Getting Started
-
-Install dependencies:
-
-```
-npm install
-```
-
-Run the frontend:
-
-```
-npm run dev
-```
-
-## Backend
-
-From the backend folder:
-
-```
-cd backend
-npm install
-npm run dev
-```
-
-## Environment Variables
-
-Create a .env file in the project root and backend folder as needed:
-- VITE_API_BASE_URL
-
-Backend:
-
-- GEMINI_API_KEY
-- PORT
-
-
