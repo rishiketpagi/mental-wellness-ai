@@ -17,10 +17,12 @@ function Journal() {
     const [journalText, setJournalText] = useState("");
     const [loading, setLoading] = useState(false);
     const [editingId, setEditingId] = useState(null);
+    const [selectedJournalId, setSelectedJournalId] = useState(null);
     const navigate = useNavigate();
 
     const user = auth.currentUser;
     const { recentJournals, loading: journalsLoading, refetch } = useJournal(user?.uid);
+    const selectedJournal = recentJournals.find((journal) => journal.id === selectedJournalId) || null;
 
     const today = new Date();
     const prompt = JOURNAL_PROMPTS[today.getDate() % JOURNAL_PROMPTS.length];
@@ -42,8 +44,10 @@ function Journal() {
                     reflection: analysis.reflection,
                     suggestion: analysis.suggestion,
                 });
+                setSelectedJournalId(editingId);
             } else {
-                await saveJournalToFirestore(user.uid, journalText, analysis);
+                const journalRef = await saveJournalToFirestore(user.uid, journalText, analysis);
+                setSelectedJournalId(journalRef.id);
             }
 
             setJournalText("");
@@ -64,6 +68,9 @@ function Journal() {
                 setEditingId(null);
                 setJournalText("");
             }
+            if (selectedJournalId === id) {
+                setSelectedJournalId(null);
+            }
             await refetch();
         } catch (error) {
             console.error("Delete journal error:", error.message);
@@ -73,6 +80,15 @@ function Journal() {
     const handleEditJournal = (journal) => {
         setEditingId(journal.id);
         setJournalText(journal.text || "");
+        setSelectedJournalId(journal.id);
+    };
+
+    const handleSelectJournal = (journal) => {
+        setSelectedJournalId(journal.id);
+    };
+
+    const handleClearSelectedJournal = () => {
+        setSelectedJournalId(null);
     };
 
     const cancelEdit = () => {
@@ -101,6 +117,9 @@ function Journal() {
                 <RecentJournals
                     recentJournals={recentJournals}
                     loading={journalsLoading}
+                    selectedJournal={selectedJournal}
+                    onSelect={handleSelectJournal}
+                    onClearSelection={handleClearSelectedJournal}
                     onEdit={handleEditJournal}
                     onDelete={handleDeleteJournal}
                 />
